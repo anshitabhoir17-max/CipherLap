@@ -211,6 +211,16 @@ img {
   font-size: 0.9rem;
 }
 
+.auth-pill.subtle {
+  background: rgba(108, 200, 255, 0.12);
+  color: var(--accent-2);
+}
+
+.auth-pill.error {
+  background: rgba(255, 118, 118, 0.14);
+  color: var(--danger);
+}
+
 .page-shell {
   padding-top: 28px;
 }

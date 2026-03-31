@@ -14,5 +14,17 @@ const app = (
 );
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>{clerkKey ? <ClerkProvider publishableKey={clerkKey}>{app}</ClerkProvider> : app}</React.StrictMode>,
+  <React.StrictMode>
+    {clerkKey ? (
+      <ClerkProvider
+        publishableKey={clerkKey}
+        signInFallbackRedirectUrl="/"
+        signUpFallbackRedirectUrl="/"
+      >
+        {app}
+      </ClerkProvider>
+    ) : (
+      app
+    )}
+  </React.StrictMode>,
 );
