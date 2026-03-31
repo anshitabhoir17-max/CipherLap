@@ -1,9 +1,21 @@
 export const tools = [
   {
+    title: "Email Header Analyzer",
+    path: "/tools/email-headers",
+    tag: "Mail Routing",
+    description: "Check SPF, DKIM, DMARC, reply-to mismatch, sender spoofing clues, and mail route details.",
+  },
+  {
     title: "Phishing Mail Analyzer",
     path: "/tools/phishing",
     tag: "Email Defense",
     description: "Check whether a message looks suspicious or likely safe using sender clues, risky links, and credential-harvesting language.",
+  },
+  {
+    title: "Domain Intelligence",
+    path: "/tools/domain-intelligence",
+    tag: "Infrastructure",
+    description: "Show WHOIS-style registration clues, DNS records, TLS details, registrar info, and suspicious domain age.",
   },
   {
     title: "Pwned Email Prep",
@@ -18,6 +30,12 @@ export const tools = [
     description: "Inspect URLs for punycode, risky keywords, shortening services, weak transport, and trust-evasion signals.",
   },
   {
+    title: "Security Headers Checker",
+    path: "/tools/security-headers",
+    tag: "Web Hardening",
+    description: "Analyze a website for CSP, HSTS, X-Frame-Options, Referrer-Policy, and missing browser security headers.",
+  },
+  {
     title: "AI Image Detector",
     path: "/tools/ai-image",
     tag: "Visual Forensics",
@@ -30,9 +48,69 @@ export const tools = [
     description: "Run a browser-side least-significant-bit extraction pass against uploaded image files.",
   },
   {
+    title: "Password Strength + Leak Safety",
+    path: "/tools/password-safety",
+    tag: "Identity Safety",
+    description: "Local password strength review with entropy score, weak-pattern detection, and privacy-first tips.",
+  },
+  {
+    title: "Hash / Encoder Lab",
+    path: "/tools/hash-lab",
+    tag: "Hashing + Encoding",
+    description: "MD5, SHA-256, Base64, URL encode/decode, Hex, and ROT13 for cyber labs and CTF workflows.",
+  },
+  {
+    title: "File Hash Verifier",
+    path: "/tools/file-hash",
+    tag: "Integrity Check",
+    description: "Upload a file and generate hashes locally so users can verify integrity.",
+  },
+  {
+    title: "Metadata Inspector",
+    path: "/tools/metadata-inspector",
+    tag: "Metadata Review",
+    description: "Show EXIF, file type, image dimensions, software used, timestamps, and hidden metadata.",
+  },
+  {
+    title: "QR / Link Extractor",
+    path: "/tools/qr-extractor",
+    tag: "Image Extraction",
+    description: "Upload a QR or screenshot-style image and extract QR payloads and safe URL-like content.",
+  },
+  {
     title: "Morse Code Lab",
     path: "/tools/morse-lab",
     tag: "Classic Signals",
     description: "Encode text into Morse or decode Morse back into readable text for puzzle and forensic workflows.",
+  },
+  {
+    title: "Incident Report Generator",
+    path: "/tools/incident-report",
+    tag: "Reporting",
+    description: "Turn investigation notes into a neat incident report that can be copied or saved locally.",
+  },
+  {
+    title: "Case Notes Dashboard",
+    path: "/tools/case-notes",
+    tag: "Case Tracking",
+    description: "Save local case notes in browser storage for demos, reports, and investigation walkthroughs.",
+  },
+  {
+    title: "IOC Checker",
+    path: "/tools/ioc-checker",
+    tag: "Threat Triage",
+    description: "Input domains, IPs, URLs, hashes, or emails and classify them into investigation-ready types.",
+  },
+  {
+    title: "JWT Decoder",
+    path: "/tools/jwt-decoder",
+    tag: "Token Review",
+    description: "Decode JWT header and payload claims safely without pretending to verify the signature.",
+  },
+  {
+    title: "Cyber Awareness Quiz",
+    path: "/tools/awareness-quiz",
+    tag: "Awareness Training",
+    description: "A short awareness quiz that adds interactivity and a more complete student-project feel.",
   },
 ];

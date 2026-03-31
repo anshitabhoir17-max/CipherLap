@@ -20,14 +20,14 @@ export function HomePage({ authEnabled }) {
         </div>
 
         <div className="landing-panel">
-          <p className="landing-panel-tag">Current Modules</p>
+          <p className="landing-panel-tag">Expanded Toolkit</p>
           <div className="landing-list">
-            <span>Phishing Mail Analyzer</span>
-            <span>Pwned Email Prep</span>
-            <span>URL Risk Scanner</span>
-            <span>AI Image Detector</span>
-            <span>Hidden Message Decoder</span>
-            <span>Morse Code Lab</span>
+            <span>Email + Header Analysis</span>
+            <span>Domain + Security Header Intelligence</span>
+            <span>Password, Hashing, and File Integrity Tools</span>
+            <span>Image AI, Metadata, QR, and Stego Utilities</span>
+            <span>IOC, JWT, Reporting, and Case Notes</span>
+            <span>Awareness Quiz + Portfolio Modules</span>
           </div>
         </div>
       </section>

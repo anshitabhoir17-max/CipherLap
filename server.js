@@ -1,6 +1,8 @@
 import http from "node:http";
+import dns from "node:dns/promises";
 import fs from "node:fs";
 import path from "node:path";
+import tls from "node:tls";
 import { fileURLToPath } from "node:url";
 
 const PORT = Number(process.env.PORT || 3000);
@@ -110,6 +112,127 @@ async function handleAiImageDetect(request, response) {
   }
 }
 
+const getTlsSnapshot = (domain) =>
+  new Promise((resolve) => {
+    const socket = tls.connect(
+      {
+        host: domain,
+        port: 443,
+        servername: domain,
+        rejectUnauthorized: false,
+      },
+      () => {
+        const certificate = socket.getPeerCertificate();
+        resolve({
+          reachable: true,
+          subject: certificate?.subject?.CN || "unknown",
+          issuer: certificate?.issuer?.O || certificate?.issuer?.CN || "unknown",
+          validTo: certificate?.valid_to || "unknown",
+        });
+        socket.end();
+      },
+    );
+
+    socket.setTimeout(8000);
+    socket.on("timeout", () => {
+      resolve({ reachable: false, subject: "unknown", issuer: "unknown", validTo: "unknown" });
+      socket.destroy();
+    });
+    socket.on("error", () => {
+      resolve({ reachable: false, subject: "unknown", issuer: "unknown", validTo: "unknown" });
+    });
+  });
+
+async function handleDomainIntelligence(url, response) {
+  try {
+    const domain = (url.searchParams.get("domain") || "").trim().toLowerCase();
+    if (!/^(?:[a-z0-9-]+\.)+[a-z]{2,}$/i.test(domain)) {
+      sendJson(response, 400, { error: "Enter a valid domain." });
+      return;
+    }
+
+    const [a, mx, ns, txt, tlsSnapshot, rdapResponse] = await Promise.all([
+      dns.resolve4(domain).catch(() => []),
+      dns.resolveMx(domain).catch(() => []),
+      dns.resolveNs(domain).catch(() => []),
+      dns.resolveTxt(domain).catch(() => []),
+      getTlsSnapshot(domain),
+      fetch(`https://rdap.org/domain/${encodeURIComponent(domain)}`).catch(() => null),
+    ]);
+
+    const rdapPayload = rdapResponse?.ok ? await rdapResponse.json() : null;
+    const createdAt =
+      rdapPayload?.events?.find((event) => /registration|created/i.test(event.eventAction))?.eventDate || null;
+    const ageDays = createdAt
+      ? Math.max(0, Math.floor((Date.now() - new Date(createdAt).getTime()) / 86400000))
+      : null;
+    const registrar =
+      rdapPayload?.entities?.find((entity) => entity.roles?.includes("registrar"))?.vcardArray?.[1]?.find?.(
+        (item) => item[0] === "fn",
+      )?.[3] || "unknown";
+
+    sendJson(response, 200, {
+      domain,
+      registrar,
+      createdAt,
+      ageDays,
+      status: rdapPayload?.status || [],
+      dns: {
+        a,
+        mx: mx.map((entry) => `${entry.exchange} (${entry.priority})`),
+        ns,
+        txt: txt.map((entry) => entry.join("")),
+      },
+      tls: tlsSnapshot,
+    });
+  } catch (error) {
+    sendJson(response, 500, {
+      error: error instanceof Error ? error.message : "Domain intelligence lookup failed.",
+    });
+  }
+}
+
+async function handleSecurityHeaders(url, response) {
+  try {
+    const rawTarget = (url.searchParams.get("url") || "").trim();
+    if (!rawTarget) {
+      sendJson(response, 400, { error: "Enter a URL first." });
+      return;
+    }
+
+    const target = new URL(/^https?:\/\//i.test(rawTarget) ? rawTarget : `https://${rawTarget}`).href;
+    const upstream = await fetch(target, {
+      redirect: "follow",
+      headers: {
+        "user-agent": "CipherLab Security Headers Checker",
+      },
+    });
+    const headerNames = [
+      "content-security-policy",
+      "strict-transport-security",
+      "x-frame-options",
+      "referrer-policy",
+      "permissions-policy",
+      "x-content-type-options",
+      "cross-origin-opener-policy",
+    ];
+
+    const headers = Object.fromEntries(headerNames.map((name) => [name, upstream.headers.get(name) || ""]));
+    const missing = headerNames.filter((name) => !headers[name]);
+
+    sendJson(response, 200, {
+      status: upstream.status,
+      finalUrl: upstream.url,
+      headers,
+      missing,
+    });
+  } catch (error) {
+    sendJson(response, 500, {
+      error: error instanceof Error ? error.message : "Security header lookup failed.",
+    });
+  }
+}
+
 function safeFilePath(baseDir, urlPathname) {
   const requestedPath = urlPathname === "/" ? "/index.html" : urlPathname;
   const normalizedPath = path.normalize(decodeURIComponent(requestedPath)).replace(/^(\.\.[/\\])+/, "");
@@ -148,6 +271,16 @@ const server = http.createServer(async (request, response) => {
 
   if (request.method === "POST" && url.pathname === "/api/ai-image-detect") {
     await handleAiImageDetect(request, response);
+    return;
+  }
+
+  if (request.method === "GET" && url.pathname === "/api/domain-intelligence") {
+    await handleDomainIntelligence(url, response);
+    return;
+  }
+
+  if (request.method === "GET" && url.pathname === "/api/security-headers") {
+    await handleSecurityHeaders(url, response);
     return;
   }
 
