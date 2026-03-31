@@ -1,0 +1,701 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Chakra+Petch:wght@500;600;700&display=swap");
+
+:root {
+  --bg: #061019;
+  --panel: rgba(10, 22, 36, 0.9);
+  --panel-soft: rgba(8, 18, 29, 0.82);
+  --line: rgba(113, 206, 255, 0.14);
+  --ink: #eaf8ff;
+  --muted: #97acbb;
+  --accent: #72f2c5;
+  --accent-2: #6cc8ff;
+  --accent-3: #ffc562;
+  --danger: #ff9b9b;
+  --success: #4fe0a9;
+  --warning: #ffb561;
+  --shadow: 0 24px 80px rgba(0, 0, 0, 0.32);
+  --radius: 24px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(108, 200, 255, 0.2), transparent 34%),
+    radial-gradient(circle at 90% 15%, rgba(114, 242, 197, 0.14), transparent 28%),
+    linear-gradient(180deg, #061019 0%, #09131d 42%, #04090f 100%);
+  color: var(--ink);
+  font-family: "Space Grotesk", "Segoe UI", sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+img {
+  max-width: 100%;
+}
+
+.app-shell {
+  position: relative;
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 24px 0 48px;
+}
+
+.background-grid {
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(108, 200, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(108, 200, 255, 0.08) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.9), transparent 90%);
+  pointer-events: none;
+}
+
+.background-glow {
+  position: fixed;
+  width: 36rem;
+  height: 36rem;
+  border-radius: 999px;
+  filter: blur(88px);
+  opacity: 0.22;
+  pointer-events: none;
+}
+
+.background-glow-left {
+  left: -10rem;
+  top: 6rem;
+  background: #1d7aa8;
+}
+
+.background-glow-right {
+  right: -12rem;
+  top: 24rem;
+  background: #1b8c6c;
+}
+
+.topbar,
+.hero-card,
+.tool-card,
+.tool-surface,
+.tool-result,
+.locked-card,
+.site-footer {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, rgba(10, 22, 36, 0.9), rgba(8, 17, 27, 0.94));
+  box-shadow: var(--shadow);
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 18px 22px;
+  border-radius: 999px;
+  backdrop-filter: blur(16px);
+}
+
+.brand-block {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.brand-logo {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+}
+
+.topbar h1,
+.hero-card h2,
+.tool-card h3,
+.tool-surface h2,
+.locked-card h2 {
+  margin: 0;
+  font-family: "Chakra Petch", sans-serif;
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.72rem;
+}
+
+.topnav {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.topnav a {
+  color: var(--muted);
+}
+
+.topnav a.active,
+.topnav a:hover {
+  color: var(--ink);
+}
+
+.topnav a.active {
+  position: relative;
+}
+
+.topnav a.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -8px;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+}
+
+.auth-cluster {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.user-button-shell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-button,
+.hero-link,
+.tool-submit {
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 12px 18px;
+  background: linear-gradient(135deg, rgba(114, 242, 197, 0.92), rgba(108, 200, 255, 0.92));
+  color: #031019;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.nav-button.ghost {
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--ink);
+  border-color: var(--line);
+}
+
+.auth-pill {
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(255, 181, 97, 0.14);
+  color: var(--warning);
+  font-size: 0.9rem;
+}
+
+.page-shell {
+  padding-top: 28px;
+}
+
+.home-stack,
+.page-stack {
+  display: grid;
+  gap: 24px;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 22px;
+}
+
+.landing-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+  gap: 24px;
+  overflow: hidden;
+}
+
+.landing-copy {
+  display: grid;
+  align-content: center;
+}
+
+.landing-panel {
+  position: relative;
+  padding: 22px;
+  border-radius: 22px;
+  border: 1px solid rgba(108, 200, 255, 0.16);
+  background:
+    radial-gradient(circle at top right, rgba(114, 242, 197, 0.16), transparent 38%),
+    rgba(255, 255, 255, 0.03);
+}
+
+.landing-panel-tag {
+  margin: 0 0 14px;
+  color: var(--accent-3);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.76rem;
+}
+
+.landing-list {
+  display: grid;
+  gap: 10px;
+}
+
+.landing-list span {
+  display: block;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(108, 200, 255, 0.12);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--ink);
+}
+
+.hero-note {
+  display: inline-flex;
+  align-items: center;
+  padding: 12px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(108, 200, 255, 0.16);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--muted);
+}
+
+.hero-card,
+.tool-card,
+.tool-surface,
+.locked-card,
+.site-footer {
+  padding: 26px;
+}
+
+.tool-directory {
+  display: grid;
+  gap: 22px;
+}
+
+.tools-hero {
+  align-items: center;
+}
+
+.section-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.section-heading h2 {
+  margin: 0;
+  font-family: "Chakra Petch", sans-serif;
+}
+
+.section-copy {
+  max-width: 32rem;
+  color: var(--muted);
+}
+
+.hero-copy {
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.hero-links {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 22px;
+}
+
+.hero-link.ghost {
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--ink);
+  border-color: var(--line);
+}
+
+.metric-grid,
+.tool-grid,
+.result-grid,
+.footer-grid,
+ .tool-form-grid {
+  display: grid;
+  gap: 18px;
+}
+
+.metric-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.metric-card,
+.result-block {
+  border-radius: 18px;
+  border: 1px solid rgba(108, 200, 255, 0.12);
+  background: rgba(255, 255, 255, 0.02);
+  padding: 16px;
+}
+
+.metric-number {
+  display: block;
+  font-size: 2rem;
+  font-family: "Chakra Petch", sans-serif;
+}
+
+.metric-label {
+  color: var(--muted);
+}
+
+.tool-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 28px;
+}
+
+.tool-card p,
+.tool-surface p,
+.locked-card p,
+.site-footer p {
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.tool-card:hover {
+  transform: translateY(-2px);
+}
+
+.tool-card {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  transition: transform 180ms ease;
+}
+
+.tool-tag,
+.result-title,
+.footer-heading {
+  color: var(--accent-3);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.76rem;
+}
+
+.tool-surface {
+  display: grid;
+  gap: 18px;
+}
+
+.tool-label {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.tool-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 20px;
+}
+
+.tool-header-copy {
+  max-width: 60ch;
+}
+
+.tool-input,
+.tool-textarea,
+.tool-file {
+  width: 100%;
+  border-radius: 18px;
+  border: 1px solid rgba(108, 200, 255, 0.16);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--ink);
+  padding: 14px 16px;
+}
+
+.tool-textarea {
+  min-height: 180px;
+  resize: vertical;
+}
+
+.tool-file {
+  padding: 12px 14px;
+}
+
+.tool-preview {
+  min-height: 240px;
+  display: grid;
+  place-items: center;
+  border-radius: 20px;
+  border: 1px solid rgba(108, 200, 255, 0.12);
+  background: rgba(6, 16, 25, 0.68);
+  overflow: hidden;
+}
+
+.tool-preview img {
+  max-width: 100%;
+  max-height: 420px;
+  object-fit: contain;
+}
+
+.tool-result {
+  margin-top: 0;
+}
+
+.error-panel {
+  color: var(--danger);
+}
+
+.tool-result h3 {
+  margin: 0 0 10px;
+}
+
+.result-badge {
+  display: inline-flex;
+  padding: 8px 12px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+}
+
+.result-badge.low {
+  background: rgba(79, 224, 169, 0.14);
+  color: var(--success);
+}
+
+.result-badge.medium {
+  background: rgba(255, 181, 97, 0.16);
+  color: var(--warning);
+}
+
+.result-badge.high {
+  background: rgba(255, 118, 118, 0.14);
+  color: var(--danger);
+}
+
+.result-summary {
+  margin-top: 14px;
+}
+
+.action-note {
+  margin: 14px 0 0;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(108, 200, 255, 0.12);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--ink);
+}
+
+.action-note strong {
+  color: var(--accent);
+}
+
+.result-list {
+  padding-left: 18px;
+}
+
+.result-list li + li {
+  margin-top: 8px;
+}
+
+.result-block-body,
+.mono {
+  font-family: "Chakra Petch", monospace;
+  color: var(--ink);
+  word-break: break-word;
+}
+
+.result-block-body p {
+  margin: 0;
+}
+
+.result-block-body p + p {
+  margin-top: 10px;
+}
+
+.button-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.tool-submit:disabled,
+.nav-button:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.site-footer {
+  display: grid;
+  gap: 0;
+  margin-top: 28px;
+  padding: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at top left, rgba(255, 96, 146, 0.12), transparent 28%),
+    radial-gradient(circle at top right, rgba(108, 200, 255, 0.1), transparent 24%),
+    linear-gradient(180deg, #24131d 0%, #16111a 100%);
+}
+
+.footer-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(180px, 0.75fr) minmax(220px, 0.9fr);
+  gap: 34px;
+  padding: 38px 40px 28px;
+}
+
+.footer-brand-column,
+.footer-links-column,
+.footer-contact-column {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+}
+
+.footer-pill {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 107, 154, 0.18);
+  background: rgba(255, 255, 255, 0.04);
+  color: #ff7fa8;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+}
+
+.footer-brand-lockup {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 6px;
+  font-family: "Chakra Petch", sans-serif;
+  font-size: 2rem;
+  color: #fff5fb;
+}
+
+.footer-logo {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+}
+
+.footer-description {
+  max-width: 34rem;
+  color: #b7a9b7;
+  line-height: 1.8;
+}
+
+.footer-mini-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.footer-mini-card {
+  display: grid;
+  gap: 8px;
+  min-height: 168px;
+  padding: 18px;
+  border-radius: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.footer-column-title {
+  margin: 0 0 10px;
+  font-family: "Chakra Petch", sans-serif;
+  font-size: 1.7rem;
+  color: #fff5fb;
+}
+
+.footer-links-column a,
+.footer-contact-column a,
+.footer-contact-column p {
+  color: #b7a9b7;
+  transition: color 160ms ease;
+}
+
+.footer-links-column a:hover,
+.footer-contact-column a:hover {
+  color: #fff5fb;
+}
+
+.footer-bottom {
+  padding: 22px 40px 26px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  text-align: center;
+}
+
+.footer-bottom p {
+  margin: 0;
+  color: #9f92a0;
+}
+
+.locked-card {
+  text-align: left;
+}
+
+@media (max-width: 980px) {
+  .hero-grid,
+  .landing-hero,
+  .tool-grid,
+  .section-heading,
+  .footer-top,
+  .footer-mini-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .section-heading {
+    display: grid;
+    align-items: start;
+  }
+}
+
+@media (max-width: 760px) {
+  .app-shell {
+    width: min(100% - 22px, 1180px);
+  }
+
+  .topbar {
+    flex-direction: column;
+    align-items: start;
+    border-radius: 28px;
+  }
+
+  .topnav {
+    flex-wrap: wrap;
+  }
+
+  .footer-top {
+    padding: 30px 24px 24px;
+  }
+
+  .footer-bottom {
+    padding: 20px 24px 24px;
+  }
+
+  .result-grid {
+    grid-template-columns: 1fr;
+  }
+}
