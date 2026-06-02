@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ResultPanel } from "../components/ResultPanel";
 import { ToolGate } from "../components/ToolGate";
 import { analyzeEmailExposure } from "../lib/analyzers";
@@ -7,6 +7,10 @@ export function BreachPage({ authEnabled }) {
   const [email, setEmail] = useState("security-team@gmail.com");
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const handleAnalyze = () => {
     try {
@@ -24,11 +28,11 @@ export function BreachPage({ authEnabled }) {
         <section className="tool-surface">
           <div className="tool-header">
             <div className="tool-header-copy">
-              <p className="eyebrow">Exposure Readiness</p>
-              <h2>Pwned Email Prep</h2>
+              <p className="eyebrow">Email Safety</p>
+              <h2>Email Safety Check</h2>
               <p>
-                Review how exposed an email address may be before you connect a real
-                breach-checking backend.
+                Check whether an email looks safer for regular use or needs a little
+                more caution before you share it widely.
               </p>
             </div>
             <button className="tool-submit" type="button" onClick={handleAnalyze}>
@@ -49,7 +53,7 @@ export function BreachPage({ authEnabled }) {
         </section>
 
         {error ? <section className="tool-result error-panel">{error}</section> : null}
-        {result ? <ResultPanel title="Pwned Email Prep" {...result} /> : null}
+        {result ? <ResultPanel title="Email Safety Check" {...result} /> : null}
       </div>
     </ToolGate>
   );

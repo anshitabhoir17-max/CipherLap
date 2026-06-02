@@ -11,6 +11,10 @@ export function ImagePage({ authEnabled }) {
   const [isChecking, setIsChecking] = useState(false);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
     if (!file) {
       setPreviewUrl("");
       return undefined;

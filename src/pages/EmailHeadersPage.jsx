@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ResultPanel } from "../components/ResultPanel";
 import { ToolGate } from "../components/ToolGate";
 import { analyzeEmailHeaders } from "../lib/advancedTools";
@@ -18,6 +18,10 @@ export function EmailHeadersPage({ authEnabled }) {
   const [input, setInput] = useState(sampleHeaders);
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const handleAnalyze = () => {
     try {

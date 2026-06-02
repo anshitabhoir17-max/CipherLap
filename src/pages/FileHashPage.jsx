@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ResultPanel } from "../components/ResultPanel";
 import { ToolGate } from "../components/ToolGate";
 import { buildFileHashResult } from "../lib/advancedTools";

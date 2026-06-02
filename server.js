@@ -21,6 +21,22 @@ const MIME_TYPES = {
   ".svg": "image/svg+xml",
   ".ico": "image/x-icon",
 };
+const SECURITY_HEADER_NAMES = [
+  "content-security-policy",
+  "strict-transport-security",
+  "x-frame-options",
+  "referrer-policy",
+  "permissions-policy",
+  "x-content-type-options",
+  "cross-origin-opener-policy",
+];
+const SECURITY_CHECK_HEADERS = {
+  "user-agent": "Mozilla/5.0 CipherLab Security Headers Checker",
+  accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+  "accept-language": "en-US,en;q=0.9",
+  "cache-control": "no-cache",
+  pragma: "no-cache",
+};
 
 function sendJson(response, statusCode, payload) {
   response.writeHead(statusCode, {
@@ -201,28 +217,67 @@ async function handleSecurityHeaders(url, response) {
     }
 
     const target = new URL(/^https?:\/\//i.test(rawTarget) ? rawTarget : `https://${rawTarget}`).href;
-    const upstream = await fetch(target, {
-      redirect: "follow",
-      headers: {
-        "user-agent": "CipherLab Security Headers Checker",
-      },
-    });
-    const headerNames = [
-      "content-security-policy",
-      "strict-transport-security",
-      "x-frame-options",
-      "referrer-policy",
-      "permissions-policy",
-      "x-content-type-options",
-      "cross-origin-opener-policy",
-    ];
+    const candidates = [target];
+    const parsedTarget = new URL(target);
+    if (parsedTarget.protocol === "https:") {
+      const httpTarget = new URL(parsedTarget.href);
+      httpTarget.protocol = "http:";
+      candidates.push(httpTarget.href);
+    }
 
-    const headers = Object.fromEntries(headerNames.map((name) => [name, upstream.headers.get(name) || ""]));
-    const missing = headerNames.filter((name) => !headers[name]);
+    let upstream = null;
+    let methodUsed = "GET";
+    let lastError = null;
+
+    for (const candidate of candidates) {
+      for (const method of ["HEAD", "GET"]) {
+        try {
+          const nextResponse = await fetch(candidate, {
+            method,
+            redirect: "follow",
+            signal: AbortSignal.timeout(10000),
+            headers: SECURITY_CHECK_HEADERS,
+          });
+
+          if (nextResponse.status === 405 && method === "HEAD") {
+            continue;
+          }
+
+          upstream = nextResponse;
+          methodUsed = method;
+          break;
+        } catch (error) {
+          lastError = error;
+        }
+      }
+
+      if (upstream) {
+        break;
+      }
+    }
+
+    if (!upstream) {
+      throw lastError || new Error("The website could not be reached.");
+    }
+
+    const headers = {
+      "content-security-policy":
+        upstream.headers.get("content-security-policy") ||
+        upstream.headers.get("content-security-policy-report-only") ||
+        "",
+      "strict-transport-security": upstream.headers.get("strict-transport-security") || "",
+      "x-frame-options": upstream.headers.get("x-frame-options") || "",
+      "referrer-policy": upstream.headers.get("referrer-policy") || "",
+      "permissions-policy": upstream.headers.get("permissions-policy") || "",
+      "x-content-type-options": upstream.headers.get("x-content-type-options") || "",
+      "cross-origin-opener-policy": upstream.headers.get("cross-origin-opener-policy") || "",
+    };
+    const missing = SECURITY_HEADER_NAMES.filter((name) => !headers[name]);
 
     sendJson(response, 200, {
       status: upstream.status,
       finalUrl: upstream.url,
+      method: methodUsed,
       headers,
       missing,
     });

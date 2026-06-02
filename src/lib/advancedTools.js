@@ -175,6 +175,16 @@ const extractEmailDomain = (value = "") => {
   return match ? match[1].toLowerCase() : "";
 };
 
+const readJsonResponse = async (response) => response.json().catch(() => ({}));
+
+const formatBackendError = (error, fallbackMessage) => {
+  const message = error instanceof Error ? error.message : "";
+  if (/fetch/i.test(message) || /failed/i.test(message)) {
+    return `${fallbackMessage} If you are testing locally, start \`npm run api\` too.`;
+  }
+  return message || fallbackMessage;
+};
+
 export function analyzeEmailHeaders(rawHeaders) {
   if (!rawHeaders.trim()) {
     throw new Error("Paste raw email headers first.");
@@ -274,8 +284,15 @@ export function analyzeEmailHeaders(rawHeaders) {
 
 export async function lookupDomainIntelligence(rawInput) {
   const domain = normalizeDomain(rawInput);
-  const response = await fetch(`/api/domain-intelligence?domain=${encodeURIComponent(domain)}`);
-  const payload = await response.json().catch(() => ({}));
+  let response;
+
+  try {
+    response = await fetch(`/api/domain-intelligence?domain=${encodeURIComponent(domain)}`);
+  } catch (error) {
+    throw new Error(formatBackendError(error, "Could not reach the domain lookup service."));
+  }
+
+  const payload = await readJsonResponse(response);
   if (!response.ok) {
     throw new Error(payload.error || "Domain intelligence lookup failed.");
   }
@@ -346,24 +363,36 @@ export async function lookupDomainIntelligence(rawInput) {
 
 export async function checkSecurityHeaders(rawInput) {
   const target = normalizeTargetUrl(rawInput);
-  const response = await fetch(`/api/security-headers?url=${encodeURIComponent(target)}`);
-  const payload = await response.json().catch(() => ({}));
+  let response;
+
+  try {
+    response = await fetch(`/api/security-headers?url=${encodeURIComponent(target)}`);
+  } catch (error) {
+    throw new Error(formatBackendError(error, "Could not reach the security headers service."));
+  }
+
+  const payload = await readJsonResponse(response);
   if (!response.ok) {
     throw new Error(payload.error || "Security header lookup failed.");
   }
 
   const presentHeaders = Object.entries(payload.headers || {}).filter(([, value]) => value);
   const missingHeaders = payload.missing || [];
-  const score = clamp(100 - missingHeaders.length * 12, 0, 100);
+  const needsFixes = missingHeaders.length > 3;
 
   return {
-    badge: missingHeaders.length > 3 ? "Missing Key Headers" : "Headers Look Better",
-    tone: resultTone(100 - score),
-    summary: "This check reviews common browser security headers on the target response.",
-    action: "Missing headers do not prove compromise, but they do indicate weaker browser-side hardening.",
+    badge: needsFixes ? "Needs Fixes" : "Looks Good",
+    tone: needsFixes ? "medium" : "low",
+    summary: needsFixes
+      ? "This website is missing a few important browser security headers."
+      : "This website returned a better set of browser security headers in this check.",
+    action: needsFixes
+      ? "Add the missing headers on the server so browsers get stronger protection."
+      : "Keep these headers in place and review them after major hosting or CDN changes.",
     findings: [
       `HTTP status: ${payload.status || "unknown"}`,
       `Final URL: ${payload.finalUrl || target}`,
+      `Check method: ${payload.method || "GET"}`,
       ...missingHeaders.map((header) => `Missing: ${header}`),
       ...presentHeaders.map(([header]) => `Present: ${header}`),
     ],
@@ -425,11 +454,11 @@ export function analyzePasswordSafety(password) {
   const riskScore = clamp(risk, 0, 100);
 
   return {
-    badge: riskScore >= 55 ? "Weak / Reused Risk" : riskScore >= 30 ? "Needs Improvement" : "Stronger Password",
+    badge: riskScore >= 55 ? "Not Safe" : riskScore >= 30 ? "Can Be Stronger" : "Looks Strong",
     tone: resultTone(riskScore),
-    summary: "This is a privacy-first local password review. The password never leaves your browser.",
+    summary: "This is a privacy-first local password review. The password stays in your browser.",
     action:
-      "Use a unique passphrase for every account and store it in a password manager instead of reusing memorable patterns.",
+      "Use a unique password for every account and store it in a password manager instead of reusing easy patterns.",
     findings,
     blocks: [
       {

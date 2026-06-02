@@ -49,6 +49,10 @@ export function SecurityHeadersPage({ authEnabled }) {
             value={url}
             onChange={(event) => setUrl(event.target.value)}
           />
+          <p className="helper-note">
+            Try full links like <code>https://example.com</code>. If you are running locally,
+            make sure <code>npm run api</code> is running too.
+          </p>
         </section>
 
         {error ? <section className="tool-result error-panel">{error}</section> : null}

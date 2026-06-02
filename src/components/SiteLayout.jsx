@@ -22,6 +22,7 @@ export function SiteLayout({ authEnabled, children }) {
         <nav className="topnav">
           <NavLink to="/">Home</NavLink>
           <NavLink to="/tools">Tools</NavLink>
+          <NavLink to="/career">Careers</NavLink>
         </nav>
 
         <AuthControls authEnabled={authEnabled} />
@@ -40,20 +41,20 @@ export function SiteLayout({ authEnabled, children }) {
             </Link>
 
             <p className="footer-description">
-              CipherLab is your cyber security project space for checking suspicious
-              content, exploring defensive tools, and presenting a cleaner student
-              portfolio experience.
+              CipherLab brings practical cybersecurity checks, learning roadmaps,
+              and investigation helpers into one clear workspace for students and
+              early security learners.
             </p>
 
             <div className="footer-mini-grid">
               <article className="footer-mini-card">
                 <p className="footer-heading">Experience</p>
-                <p>Open tools faster from one clean dashboard.</p>
+                <p>Move from the dashboard to the right security tool quickly.</p>
               </article>
 
               <article className="footer-mini-card">
-                <p className="footer-heading">Platforms</p>
-                <p>React, Clerk, Node API, and secure tool routing.</p>
+                <p className="footer-heading">Learning</p>
+                <p>Practice with guided tools, roadmaps, and OWASP Top 10 notes.</p>
               </article>
             </div>
           </section>
@@ -62,9 +63,10 @@ export function SiteLayout({ authEnabled, children }) {
             <p className="footer-column-title">Company</p>
             <Link to="/">Home</Link>
             <Link to="/tools">Tools</Link>
-            <Link to="/tools/phishing">Phishing Analyzer</Link>
+            <Link to="/tools/pwned-email">Email Safety Check</Link>
             <Link to="/tools/ai-image">AI Image Detector</Link>
             <Link to="/tools/hidden-message">Hidden Message Decoder</Link>
+            <Link to="/tools/owasp-top10">OWASP Top 10</Link>
           </section>
 
           <section className="footer-contact-column">

@@ -3,6 +3,10 @@ import { ToolGate } from "../components/ToolGate";
 import { clearCaseNotes, deleteCaseNote, loadCaseNotes, saveCaseNote } from "../lib/advancedTools";
 
 export function CaseNotesPage({ authEnabled }) {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const [notes, setNotes] = useState([]);
   const [title, setTitle] = useState("New Note");
   const [category, setCategory] = useState("General");

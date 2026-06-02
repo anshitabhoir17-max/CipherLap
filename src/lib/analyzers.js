@@ -402,61 +402,59 @@ export function analyzeEmailExposure(email) {
 
   const [, localPart, domain] = match;
   const findings = [];
-  let score = 8;
+  let score = 0;
 
   if (roleAliases.has(localPart)) {
-    score += 18;
-    findings.push("This looks like a role-based mailbox, which increases exposure if reused publicly.");
+    score += 24;
+    findings.push("This looks like a shared mailbox name, so it is easier to guess and target.");
   }
 
   if (emailProviderList.has(domain)) {
     score += 6;
-    findings.push("This uses a common public email provider, which is normal but heavily targeted in breach campaigns.");
+    findings.push("This uses a common public email provider. That is normal, but it is often targeted in fake-login attacks.");
   }
 
   if (disposableDomains.has(domain)) {
-    score += 28;
-    findings.push("The domain is in a disposable-email list, which lowers trust and account recovery confidence.");
+    score += 40;
+    findings.push("This domain looks disposable, so it is not a good choice for important long-term accounts.");
   }
 
   if (localPart.includes("+")) {
     score += 4;
-    findings.push("Alias tagging detected with '+'. This is useful for tracking sign-up sources.");
+    findings.push("A '+' alias is being used. That is fine, but some websites expose these variations publicly.");
   }
 
   if (/\d{4,}/.test(localPart)) {
-    score += 8;
-    findings.push("Long digit patterns were found in the local part. Avoid using birth years or obvious identifiers.");
+    score += 10;
+    findings.push("Long number patterns were found. Try not to use birthdays or easy-to-guess personal details.");
   }
 
   if (localPart.length < 4) {
-    score += 6;
-    findings.push("Very short mailbox names are easy to guess and enumerate.");
+    score += 12;
+    findings.push("Very short email names are easier to guess.");
   }
 
   const finalScore = clamp(score, 0, 100);
+  const needsAttention = finalScore >= 28;
 
   return {
     score: finalScore,
-    badge: `Exposure Review ${finalScore}/100`,
-    tone: getToneFromScore(finalScore),
-    summary:
-      "This is an offline exposure review. For real breach hits, connect a secure backend route to a live breach API instead of exposing an API key in frontend code.",
-    findings,
+    badge: needsAttention ? "Not Safe" : "Looks Safe",
+    tone: needsAttention ? "high" : "low",
+    summary: needsAttention
+      ? "This email has a few clues that make it easier to target or reuse in public signups."
+      : "This email looks more okay for normal use in this quick local check.",
+    action: needsAttention
+      ? "Use a strong unique password, turn on 2-step verification, and avoid using this address as your main public email everywhere."
+      : "Keep using a strong unique password and 2-step verification so the account stays protected.",
+    findings: findings.length ? findings : ["No obvious email-exposure clues were found in this quick check."],
     blocks: [
       {
-        title: "Surface snapshot",
+        title: "Email details",
         content: [
           `Mailbox: ${localPart}`,
           `Domain: ${domain}`,
           `Provider class: ${emailProviderList.has(domain) ? "public provider" : "custom domain"}`,
-        ],
-      },
-      {
-        title: "Recommended next step",
-        content: [
-          "Pair this tool with a backend endpoint that calls Have I Been Pwned or another breach service server-side.",
-          "Return only a safe response summary to the browser.",
         ],
       },
     ],

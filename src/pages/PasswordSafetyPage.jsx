@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ResultPanel } from "../components/ResultPanel";
 import { ToolGate } from "../components/ToolGate";
 import { analyzePasswordSafety } from "../lib/advancedTools";
@@ -7,6 +7,10 @@ export function PasswordSafetyPage({ authEnabled }) {
   const [password, setPassword] = useState("Welcome123!");
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const handleCheck = () => {
     try {
@@ -25,10 +29,10 @@ export function PasswordSafetyPage({ authEnabled }) {
           <div className="tool-header">
             <div className="tool-header-copy">
               <p className="eyebrow">Identity Safety</p>
-              <h2>Password Strength + Leak Safety</h2>
+              <h2>Password Safety Check</h2>
               <p>
                 Run a privacy-first local check for length, common weak patterns, entropy, and
-                reuse risk clues.
+                easy-to-guess password issues.
               </p>
             </div>
             <button className="tool-submit" type="button" onClick={handleCheck}>
@@ -49,7 +53,7 @@ export function PasswordSafetyPage({ authEnabled }) {
         </section>
 
         {error ? <section className="tool-result error-panel">{error}</section> : null}
-        {result ? <ResultPanel title="Password Strength + Leak Safety" {...result} /> : null}
+        {result ? <ResultPanel title="Password Safety Check" {...result} /> : null}
       </div>
     </ToolGate>
   );

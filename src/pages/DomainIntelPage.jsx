@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ResultPanel } from "../components/ResultPanel";
 import { ToolGate } from "../components/ToolGate";
 import { lookupDomainIntelligence } from "../lib/advancedTools";
@@ -8,6 +8,10 @@ export function DomainIntelPage({ authEnabled }) {
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const handleLookup = async () => {
     try {
