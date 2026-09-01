@@ -47,6 +47,17 @@ npm run dev
 
 5. Open the Vite URL shown in the terminal. By default this is `http://localhost:5173`.
 
+## Automatic deployment
+
+The GitHub Actions workflow in `.github/workflows/vercel-deploy.yml` deploys after every push to
+`main`. In the GitHub repository settings, add these Actions secrets:
+
+- `VERCEL_TOKEN`: a Vercel access token
+- `VERCEL_SCOPE`: your Vercel team or account scope, for example `anshitabhoir17-maxs-projects`
+
+Make sure the Vercel project is connected to this repository, `anshitabhoir17-max/CipherLap`,
+and uses `npm run build` with `dist` as the output directory.
+
 ## Environment variables
 
 ```powershell
