@@ -20,11 +20,12 @@ const FileHashPage = lazyNamed(() => import("./pages/FileHashPage"), "FileHashPa
 const MetadataPage = lazyNamed(() => import("./pages/MetadataPage"), "MetadataPage");
 const QrExtractorPage = lazyNamed(() => import("./pages/QrExtractorPage"), "QrExtractorPage");
 const IncidentReportPage = lazyNamed(() => import("./pages/IncidentReportPage"), "IncidentReportPage");
-const CaseNotesPage = lazyNamed(() => import("./pages/CaseNotesPage"), "CaseNotesPage");
 const AwarenessQuizPage = lazyNamed(() => import("./pages/AwarenessQuizPage"), "AwarenessQuizPage");
 const OwaspTop10Page = lazyNamed(() => import("./pages/OwaspTop10Page"), "OwaspTop10Page");
 const OwaspTop10DetailPage = lazyNamed(() => import("./pages/OwaspTop10DetailPage"), "OwaspTop10DetailPage");
-const PayloadTesterPage = lazyNamed(() => import("./pages/PayloadTesterPage"), "PayloadTesterPage");
+const CommandGuidePage = lazyNamed(() => import("./pages/CommandGuidePage"), "CommandGuidePage");
+const OutputTranslatorPage = lazyNamed(() => import("./pages/OutputTranslatorPage"), "OutputTranslatorPage");
+const NetworkTroubleshootingPage = lazyNamed(() => import("./pages/NetworkTroubleshootingPage"), "NetworkTroubleshootingPage");
 const NetworkScannerPage = lazyNamed(() => import("./pages/NetworkScannerPage"), "NetworkScannerPage");
 
 export default function App({ authEnabled }) {
@@ -56,13 +57,14 @@ export default function App({ authEnabled }) {
           <Route path="/tools/metadata-inspector" element={<MetadataPage authEnabled={authEnabled} />} />
           <Route path="/tools/qr-extractor" element={<QrExtractorPage authEnabled={authEnabled} />} />
           <Route path="/tools/incident-report" element={<IncidentReportPage authEnabled={authEnabled} />} />
-          <Route path="/tools/case-notes" element={<CaseNotesPage authEnabled={authEnabled} />} />
           <Route path="/tools/ioc-checker" element={<Navigate replace to="/tools" />} />
           <Route path="/tools/jwt-decoder" element={<Navigate replace to="/tools" />} />
           <Route path="/tools/awareness-quiz" element={<AwarenessQuizPage authEnabled={authEnabled} />} />
           <Route path="/tools/owasp-top10" element={<OwaspTop10Page authEnabled={authEnabled} />} />
           <Route path="/tools/owasp-top10/:vulnId" element={<OwaspTop10DetailPage authEnabled={authEnabled} />} />
-          <Route path="/tools/payload-tester" element={<PayloadTesterPage authEnabled={authEnabled} />} />
+          <Route path="/tools/command-guide" element={<CommandGuidePage authEnabled={authEnabled} />} />
+          <Route path="/tools/output-translator" element={<OutputTranslatorPage authEnabled={authEnabled} />} />
+          <Route path="/tools/network-troubleshooting" element={<NetworkTroubleshootingPage authEnabled={authEnabled} />} />
           <Route path="/tools/network-scanner" element={<NetworkScannerPage authEnabled={authEnabled} />} />
           <Route path="/career" element={<CareerRoadmapPage />} />
           <Route path="/career/:roleId" element={<CareerRolePage />} />

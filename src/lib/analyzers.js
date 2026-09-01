@@ -389,75 +389,110 @@ export function analyzePhishingMessage(text) {
   };
 }
 
-export function analyzeEmailExposure(email) {
-  const trimmed = email.trim().toLowerCase();
-  if (!trimmed) {
-    throw new Error("Enter an email address first.");
-  }
+export function analyzeEmailSafety({ email = "", message = "", mode = "address" }) {
+  const suppliedMessage = message.trim();
+  const extractedAddress = suppliedMessage.match(/\b[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}\b/i)?.[0] || "";
+  const address = (email.trim() || extractedAddress).toLowerCase();
+  if (!address) throw new Error("Enter an email address, or paste a message containing a From address.");
 
-  const match = trimmed.match(/^([a-z0-9._%+-]+)@([a-z0-9.-]+\.[a-z]{2,})$/i);
-  if (!match) {
-    throw new Error("Enter a valid email address.");
-  }
+  const match = address.match(/^([a-z0-9._%+-]+)@([a-z0-9.-]+\.[a-z]{2,})$/i);
+  if (!match) throw new Error("Enter a valid email address.");
 
   const [, localPart, domain] = match;
   const findings = [];
+  const blocks = [];
   let score = 0;
+  const add = (points, finding) => { score += points; findings.push(finding); };
 
-  if (roleAliases.has(localPart)) {
-    score += 24;
-    findings.push("This looks like a shared mailbox name, so it is easier to guess and target.");
+  if (disposableDomains.has(domain)) add(40, "The domain appears on the disposable-email list.");
+  if (/xn--|\d{3,}|-{2,}|^[a-z0-9-]+-(login|secure|verify|support)/i.test(domain)) add(25, "The domain structure has look-alike or high-risk patterns.");
+  if (roleAliases.has(localPart)) add(8, "The mailbox name is a common role or shared-account name.");
+  const suspiciousMailboxTerms = {
+    "security-alert": 60,
+    "bank-security": 60,
+    security: 48,
+    alert: 45,
+    rewards: 50,
+    prize: 50,
+    delivery: 20,
+    verify: 22,
+    account: 18,
+    payment: 18,
+    urgent: 22,
+    winner: 50,
+  };
+  const matchedMailboxTerms = Object.keys(suspiciousMailboxTerms).filter((term) => localPart.includes(term));
+  if (matchedMailboxTerms.length) add(Math.min(100, matchedMailboxTerms.reduce((total, term) => total + suspiciousMailboxTerms[term], 0)), `The mailbox name contains message-lure terms: ${matchedMailboxTerms.join(", ")}.`);
+
+  const domainStatus = disposableDomains.has(domain) ? "SUSPICIOUS" : emailProviderList.has(domain) ? "KNOWN PROVIDER" : "UNKNOWN";
+  blocks.push({ title: "Address and domain", content: [`Address: ${address}`, `Domain: ${domain}`, `Format: PASS`, `Domain reputation: ${domainStatus}`] });
+
+  if (mode === "address") {
+    const addressScore = clamp(score, 0, 100);
+    const risk = addressScore >= 45 ? "HIGH RISK" : addressScore >= 18 ? "MEDIUM RISK" : "LOW RISK";
+    return {
+      score: addressScore,
+      badge: risk,
+      tone: risk === "HIGH RISK" ? "high" : risk === "MEDIUM RISK" ? "medium" : "low",
+      summary: risk === "LOW RISK" ? "No strong warning signs were found in the address itself." : "The address contains visible patterns that deserve extra caution.",
+      action: "This is an address-level heuristic, not proof of spam or legitimacy. Verify the sender before trusting links, attachments, or requests.",
+      findings: findings.length ? findings : ["Valid email format detected.", "No suspicious mailbox-name patterns were found."],
+      blocks,
+    };
   }
 
-  if (emailProviderList.has(domain)) {
-    score += 6;
-    findings.push("This uses a common public email provider. That is normal, but it is often targeted in fake-login attacks.");
+  const text = suppliedMessage;
+  if (!text) throw new Error("Paste the full email, headers, or message body for Full Email Analyzer mode.");
+  const lower = text.toLowerCase();
+  const headers = {};
+  for (const line of text.split(/\r?\n/)) {
+    const header = line.match(/^(from|reply-to|subject|authentication-results|received-spf):\s*(.+)$/i);
+    if (header) headers[header[1].toLowerCase()] = header[2];
   }
 
-  if (disposableDomains.has(domain)) {
-    score += 40;
-    findings.push("This domain looks disposable, so it is not a good choice for important long-term accounts.");
-  }
+  const fromDomain = headers.from ? parseEmailDomain(headers.from) : "";
+  const replyDomain = headers["reply-to"] ? parseEmailDomain(headers["reply-to"]) : "";
+  if (fromDomain && replyDomain && fromDomain !== replyDomain) add(20, `From and Reply-To domains do not match (${fromDomain} vs ${replyDomain}).`);
 
-  if (localPart.includes("+")) {
-    score += 4;
-    findings.push("A '+' alias is being used. That is fine, but some websites expose these variations publicly.");
-  }
+  const authText = `${headers["authentication-results"] || ""} ${headers["received-spf"] || ""} ${lower}`;
+  const authRows = ["SPF", "DKIM", "DMARC"].map((name) => {
+    const pass = new RegExp(`${name.toLowerCase()}[=: ]+pass\\b`, "i").test(authText);
+    const fail = new RegExp(`${name.toLowerCase()}[=: ]+(fail|none|softfail|neutral)\\b`, "i").test(authText);
+    if (fail) add(name === "DMARC" ? 15 : 10, `${name} did not pass in the supplied headers. This is a risk signal, not proof of maliciousness.`);
+    return `${name}: ${pass ? "PASS" : fail ? "FAIL" : "NOT PROVIDED"}`;
+  });
+  blocks.push({ title: "Authentication", content: authRows });
 
-  if (/\d{4,}/.test(localPart)) {
-    score += 10;
-    findings.push("Long number patterns were found. Try not to use birthdays or easy-to-guess personal details.");
-  }
+  const urgency = ["urgent", "immediately", "verify now", "act now", "final warning", "suspended", "unusual activity"].filter((term) => lower.includes(term));
+  const credentials = ["password", "otp", "verification code", "login", "sign in", "cvv", "pin"].filter((term) => lower.includes(term));
+  const financial = ["bank", "wallet", "invoice", "refund", "tax", "payroll", "payment", "card"].filter((term) => lower.includes(term));
+  if (urgency.length) add(Math.min(15, urgency.length * 5), `Urgent or threatening language detected: ${urgency.join(", ")}.`);
+  if (credentials.length) add(25, `Credential or account-access request detected: ${credentials.join(", ")}.`);
+  if (financial.length) add(20, `Financial language detected: ${financial.join(", ")}.`);
+  if (/\bdear customer\b|\bdear user\b/i.test(text)) add(8, "The message uses a generic greeting.");
 
-  if (localPart.length < 4) {
-    score += 12;
-    findings.push("Very short email names are easier to guess.");
+  const links = extractLinks(text);
+  let suspiciousLinks = 0;
+  for (const link of links.slice(0, 8)) {
+    try {
+      const linkResult = inspectUrl(link);
+      if (linkResult.score >= 40) suspiciousLinks += 1;
+    } catch { suspiciousLinks += 1; }
   }
+  if (links.length) add(Math.min(20, suspiciousLinks * 12 + 3), `${links.length} link(s) found; ${suspiciousLinks} show warning signals.`);
+  if (links.some((link) => /^http:\/\//i.test(link))) add(8, "A non-HTTPS link was found.");
+  blocks.push({ title: "Message signals", content: [`From: ${headers.from || "not supplied"}`, `Links found: ${links.length}`, `Sender domain: ${fromDomain || "not detected"}`, `Reply-To domain: ${replyDomain || "not detected"}`] });
 
   const finalScore = clamp(score, 0, 100);
-  const needsAttention = finalScore >= 28;
-
+  const risk = finalScore >= 70 ? "HIGH RISK" : finalScore >= 30 ? "MEDIUM RISK" : "LOW RISK";
   return {
     score: finalScore,
-    badge: needsAttention ? "Not Safe" : "Looks Safe",
-    tone: needsAttention ? "high" : "low",
-    summary: needsAttention
-      ? "This email has a few clues that make it easier to target or reuse in public signups."
-      : "This email looks more okay for normal use in this quick local check.",
-    action: needsAttention
-      ? "Use a strong unique password, turn on 2-step verification, and avoid using this address as your main public email everywhere."
-      : "Keep using a strong unique password and 2-step verification so the account stays protected.",
-    findings: findings.length ? findings : ["No obvious email-exposure clues were found in this quick check."],
-    blocks: [
-      {
-        title: "Email details",
-        content: [
-          `Mailbox: ${localPart}`,
-          `Domain: ${domain}`,
-          `Provider class: ${emailProviderList.has(domain) ? "public provider" : "custom domain"}`,
-        ],
-      },
-    ],
+    badge: risk,
+    tone: finalScore >= 70 ? "high" : finalScore >= 30 ? "medium" : "low",
+    summary: finalScore >= 70 ? "Multiple independent indicators suggest possible phishing or spam." : finalScore >= 30 ? "Some warning signs were found. Verify before clicking or replying." : "No major suspicious indicators were detected in the supplied text.",
+    action: finalScore >= 30 ? "Do not click links or share credentials until you verify the sender independently." : "Still verify important requests through a trusted channel.",
+    findings: findings.length ? findings : ["No major suspicious content signals were found."],
+    blocks,
   };
 }
 

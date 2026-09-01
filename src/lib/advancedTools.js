@@ -2,7 +2,6 @@ import CryptoJS from "crypto-js";
 import * as exifr from "exifr";
 import jsQR from "jsqr";
 
-const CASE_NOTES_KEY = "cipherlab-case-notes";
 const commonWeakPasswords = new Set([
   "password",
   "password123",
@@ -721,42 +720,6 @@ ${recommendations.trim() || "Recommendations not provided."}
 ## Evidence
 ${evidence.trim() || "Evidence not provided."}
 `;
-}
-
-export function loadCaseNotes() {
-  if (typeof window === "undefined") {
-    return [];
-  }
-
-  try {
-    const raw = window.localStorage.getItem(CASE_NOTES_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch {
-    return [];
-  }
-}
-
-export function saveCaseNote(note) {
-  const notes = loadCaseNotes();
-  const nextNote = {
-    id: crypto.randomUUID(),
-    createdAt: new Date().toISOString(),
-    ...note,
-  };
-  const nextNotes = [nextNote, ...notes];
-  window.localStorage.setItem(CASE_NOTES_KEY, JSON.stringify(nextNotes));
-  return nextNotes;
-}
-
-export function deleteCaseNote(noteId) {
-  const nextNotes = loadCaseNotes().filter((note) => note.id !== noteId);
-  window.localStorage.setItem(CASE_NOTES_KEY, JSON.stringify(nextNotes));
-  return nextNotes;
-}
-
-export function clearCaseNotes() {
-  window.localStorage.removeItem(CASE_NOTES_KEY);
-  return [];
 }
 
 export function analyzeIocs(rawInput) {

@@ -8,7 +8,7 @@ export function HomePage({ authEnabled }) {
           <p className="eyebrow">Student VAPT Lab</p>
           <h2>CipherLab VAPT lab for security practice.</h2>
           <p className="hero-copy">
-            Explore the lab purpose, open the tool workspace, and reach key cybersecurity resources quickly.
+            Simple tools for learning, checking, and understanding cybersecurity.
           </p>
 
           <div className="hero-links">
@@ -30,7 +30,7 @@ export function HomePage({ authEnabled }) {
 
           <div className="stats-grid">
             <article className="stat-card">
-              <span className="stat-value">14</span>
+              <span className="stat-value">17</span>
               <p className="stat-label">Tools</p>
             </article>
             <article className="stat-card">
@@ -40,10 +40,6 @@ export function HomePage({ authEnabled }) {
             <article className="stat-card">
               <span className="stat-value">24</span>
               <p className="stat-label">Learning checkpoints</p>
-            </article>
-            <article className="stat-card">
-              <span className="stat-value">1</span>
-              <p className="stat-label">Hands-on lab</p>
             </article>
           </div>
         </div>
@@ -65,27 +61,27 @@ export function HomePage({ authEnabled }) {
       <section className="mission-section">
         <div className="section-heading">
           <div>
-            <p className="eyebrow">What you can do here</p>
-            <h2>Inspect, analyze, verify, and decode security content.</h2>
+            <p className="eyebrow">Learn by doing</p>
+            <h2>Understand what you see. Know what to do next.</h2>
           </div>
         </div>
 
         <div className="mission-grid">
           <article className="mission-card">
             <h3>Inspect suspicious domains</h3>
-            <p>Probe DNS, TLS, and registrar details to evaluate unknown websites.</p>
+            <p>Check domains, DNS, TLS, and website details.</p>
           </article>
           <article className="mission-card">
             <h3>Analyze email headers</h3>
-            <p>Review SPF, DKIM, DMARC, and phishing signals in message metadata.</p>
+            <p>Spot spoofing and phishing clues in email headers.</p>
           </article>
           <article className="mission-card">
             <h3>Verify hashes and integrity</h3>
-            <p>Use hashing and file verification tools to validate downloads and assets.</p>
+            <p>Verify files, hashes, passwords, and encoded data.</p>
           </article>
           <article className="mission-card">
             <h3>Decode tokens and hidden data</h3>
-            <p>Inspect JWTs, QR payloads, and steganography-friendly images.</p>
+            <p>Translate output and follow guided troubleshooting steps.</p>
           </article>
         </div>
       </section>
@@ -94,9 +90,9 @@ export function HomePage({ authEnabled }) {
         <div className="section-heading">
           <div>
             <p className="eyebrow">Most used tools</p>
-            <h2>Jump directly into the CipherLab workflow.</h2>
+            <h2>Start with a popular tool.</h2>
           </div>
-          <p className="section-copy">These tools are ready to use now. Click any card to open it instantly.</p>
+          <p className="section-copy">Pick a tool and begin.</p>
         </div>
 
         <div className="feature-grid">
@@ -107,15 +103,15 @@ export function HomePage({ authEnabled }) {
             <Link className="hero-link" to="/tools/owasp-top10">Open Tool</Link>
           </article>
           <article className="feature-card">
-            <p className="tool-tag">Exploitation</p>
-            <h3>XSS / SQLi payload tester</h3>
-            <p>Encode, decode, and transform payloads locally to learn exploitation techniques.</p>
-            <Link className="hero-link" to="/tools/payload-tester">Open Tool</Link>
+            <p className="tool-tag">Guided Learning</p>
+            <h3>Command Guide</h3>
+            <p>Understand the next safe lab step instead of guessing which command comes next.</p>
+            <Link className="hero-link" to="/tools/command-guide">Open Tool</Link>
           </article>
           <article className="feature-card">
             <p className="tool-tag">Recon</p>
             <h3>Network scanner concept</h3>
-            <p>Run safe browser probes and simulated scans for lab-based network reconnaissance.</p>
+            <p>Explore safe network reconnaissance concepts.</p>
             <Link className="hero-link" to="/tools/network-scanner">Open Tool</Link>
           </article>
         </div>

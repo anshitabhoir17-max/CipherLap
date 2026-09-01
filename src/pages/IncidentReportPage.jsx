@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ToolGate } from "../components/ToolGate";
-import { generateIncidentReport, saveCaseNote } from "../lib/advancedTools";
+import { generateIncidentReport } from "../lib/advancedTools";
 
 export function IncidentReportPage({ authEnabled }) {
   const [title, setTitle] = useState("Suspicious Domain Investigation");
@@ -29,21 +29,6 @@ export function IncidentReportPage({ authEnabled }) {
     setStatus("Report generated.");
   };
 
-  const handleSave = () => {
-    if (!report) {
-      setStatus("Generate the report first.");
-      return;
-    }
-
-    saveCaseNote({
-      title,
-      category: "Incident Report",
-      severity,
-      body: report,
-    });
-    setStatus("Report saved to Case Notes Dashboard.");
-  };
-
   const handleCopy = async () => {
     if (!report) {
       setStatus("Generate the report first.");
@@ -63,8 +48,8 @@ export function IncidentReportPage({ authEnabled }) {
               <p className="eyebrow">Reporting</p>
               <h2>Incident Report Generator</h2>
               <p>
-                Turn findings into a neat incident report that you can copy or save into local
-                case notes.
+                Turn findings into a neat incident report that you can copy and share with your
+                team.
               </p>
             </div>
             <div className="button-row">
@@ -73,9 +58,6 @@ export function IncidentReportPage({ authEnabled }) {
               </button>
               <button className="nav-button ghost" type="button" onClick={handleCopy}>
                 Copy
-              </button>
-              <button className="nav-button ghost" type="button" onClick={handleSave}>
-                Save Note
               </button>
             </div>
           </div>
