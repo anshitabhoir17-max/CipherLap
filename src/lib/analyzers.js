@@ -393,12 +393,13 @@ export function analyzeEmailSafety({ email = "", message = "", mode = "address" 
   const suppliedMessage = message.trim();
   const extractedAddress = suppliedMessage.match(/\b[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}\b/i)?.[0] || "";
   const address = (email.trim() || extractedAddress).toLowerCase();
-  if (!address) throw new Error("Enter an email address, or paste a message containing a From address.");
+  if (mode === "address" && !address) throw new Error("Enter an email address first.");
+  if (mode === "full" && !address && !suppliedMessage) throw new Error("Paste the email body or headers to analyze it.");
 
-  const match = address.match(/^([a-z0-9._%+-]+)@([a-z0-9.-]+\.[a-z]{2,})$/i);
-  if (!match) throw new Error("Enter a valid email address.");
+  const match = address ? address.match(/^([a-z0-9._%+-]+)@([a-z0-9.-]+\.[a-z]{2,})$/i) : null;
+  if (mode === "address" && !match) throw new Error("Enter a valid email address.");
 
-  const [, localPart, domain] = match;
+  const [, localPart = "", domain = ""] = match || [];
   const findings = [];
   const blocks = [];
   let score = 0;
@@ -425,7 +426,7 @@ export function analyzeEmailSafety({ email = "", message = "", mode = "address" 
   if (matchedMailboxTerms.length) add(Math.min(100, matchedMailboxTerms.reduce((total, term) => total + suspiciousMailboxTerms[term], 0)), `The mailbox name contains message-lure terms: ${matchedMailboxTerms.join(", ")}.`);
 
   const domainStatus = disposableDomains.has(domain) ? "SUSPICIOUS" : emailProviderList.has(domain) ? "KNOWN PROVIDER" : "UNKNOWN";
-  blocks.push({ title: "Address and domain", content: [`Address: ${address}`, `Domain: ${domain}`, `Format: PASS`, `Domain reputation: ${domainStatus}`] });
+  blocks.push({ title: "Address and domain", content: [`Address: ${address || "not supplied"}`, `Domain: ${domain || "not detected"}`, `Format: ${address ? "PASS" : "NOT PROVIDED"}`, `Domain reputation: ${domainStatus}`] });
 
   if (mode === "address") {
     const addressScore = clamp(score, 0, 100);
@@ -442,7 +443,6 @@ export function analyzeEmailSafety({ email = "", message = "", mode = "address" 
   }
 
   const text = suppliedMessage;
-  if (!text) throw new Error("Paste the full email, headers, or message body for Full Email Analyzer mode.");
   const lower = text.toLowerCase();
   const headers = {};
   for (const line of text.split(/\r?\n/)) {
@@ -484,13 +484,13 @@ export function analyzeEmailSafety({ email = "", message = "", mode = "address" 
   blocks.push({ title: "Message signals", content: [`From: ${headers.from || "not supplied"}`, `Links found: ${links.length}`, `Sender domain: ${fromDomain || "not detected"}`, `Reply-To domain: ${replyDomain || "not detected"}`] });
 
   const finalScore = clamp(score, 0, 100);
-  const risk = finalScore >= 70 ? "HIGH RISK" : finalScore >= 30 ? "MEDIUM RISK" : "LOW RISK";
+  const risk = finalScore >= 50 ? "HIGH RISK" : finalScore >= 25 ? "MEDIUM RISK" : "LOW RISK";
   return {
     score: finalScore,
     badge: risk,
-    tone: finalScore >= 70 ? "high" : finalScore >= 30 ? "medium" : "low",
-    summary: finalScore >= 70 ? "Multiple independent indicators suggest possible phishing or spam." : finalScore >= 30 ? "Some warning signs were found. Verify before clicking or replying." : "No major suspicious indicators were detected in the supplied text.",
-    action: finalScore >= 30 ? "Do not click links or share credentials until you verify the sender independently." : "Still verify important requests through a trusted channel.",
+    tone: finalScore >= 50 ? "high" : finalScore >= 25 ? "medium" : "low",
+    summary: finalScore >= 50 ? "Multiple independent indicators suggest possible phishing or spam." : finalScore >= 25 ? "Some warning signs were found. Verify before clicking or replying." : "No major suspicious indicators were detected in the supplied text.",
+    action: finalScore >= 25 ? "Do not click links or share credentials until you verify the sender independently." : "Still verify important requests through a trusted channel.",
     findings: findings.length ? findings : ["No major suspicious content signals were found."],
     blocks,
   };
