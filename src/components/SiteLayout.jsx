@@ -9,6 +9,19 @@ export function SiteLayout({ authEnabled, children }) {
       <div className="background-grid" aria-hidden="true"></div>
       <div className="background-glow background-glow-left" aria-hidden="true"></div>
       <div className="background-glow background-glow-right" aria-hidden="true"></div>
+      <div className="cyber-scene" aria-hidden="true">
+        <div className="cyber-scanline"></div>
+        <div className="cyber-orb"><span></span><span></span><span></span><b>THREAT<br />MONITOR</b></div>
+        <div className="cyber-node node-one"></div>
+        <div className="cyber-node node-two"></div>
+        <div className="cyber-node node-three"></div>
+        <div className="cyber-beam beam-one"></div>
+        <div className="cyber-beam beam-two"></div>
+        <div className="cyber-circuit circuit-one"></div>
+        <div className="cyber-circuit circuit-two"></div>
+        <div className="cyber-circuit circuit-three"></div>
+        <div className="cyber-floor"></div>
+      </div>
 
       <header className="topbar">
         <Link className="brand-block" to="/">
@@ -33,55 +46,30 @@ export function SiteLayout({ authEnabled, children }) {
       <footer className="site-footer">
         <div className="footer-top">
           <section className="footer-brand-column">
-            <div className="footer-pill">CipherLab</div>
-
             <Link className="footer-brand-lockup" to="/">
               <img className="footer-logo" src="/logo.svg" alt="CipherLab logo" />
               <span>CipherLab</span>
             </Link>
-
-            <p className="footer-description">
-              CipherLab brings practical cybersecurity checks, learning roadmaps,
-              and investigation helpers into one clear workspace for students and
-              early security learners.
-            </p>
-
-            <div className="footer-mini-grid">
-              <article className="footer-mini-card">
-                <p className="footer-heading">Experience</p>
-                <p>Move from the dashboard to the right security tool quickly.</p>
-              </article>
-
-              <article className="footer-mini-card">
-                <p className="footer-heading">Learning</p>
-                <p>Practice with guided tools, roadmaps, and OWASP Top 10 notes.</p>
-              </article>
-            </div>
+            <p className="footer-description">Student-built cybersecurity workspace.</p>
           </section>
 
           <section className="footer-links-column">
-            <p className="footer-column-title">Company</p>
+            <p className="footer-column-title">Navigate</p>
             <Link to="/">Home</Link>
             <Link to="/tools">Tools</Link>
-            <Link to="/tools/pwned-email">Email Safety Check</Link>
-            <Link to="/tools/ai-image">AI Image Detector</Link>
-            <Link to="/tools/hidden-message">Hidden Message Decoder</Link>
-            <Link to="/tools/owasp-top10">OWASP Top 10</Link>
+            <Link to="/career">Careers</Link>
           </section>
 
           <section className="footer-contact-column">
-            <p className="footer-column-title">Get in touch</p>
-            <a href="mailto:anshitabhoir17@gmail.com">anshitabhoir17@gmail.com</a>
-            <a href="https://github.com/anshitabhoir17-max" target="_blank" rel="noreferrer">
-              github.com/anshitabhoir17-max
-            </a>
-            <p>Cyber Security Student Project</p>
-            <p>Privacy-first learning dashboard</p>
+            <p className="footer-column-title">Connect</p>
+            <a href="mailto:anshitabhoir17@gmail.com">Email</a>
+            <a href="https://github.com/anshitabhoir17-max" target="_blank" rel="noreferrer">GitHub</a>
           </section>
         </div>
 
         <div className="footer-bottom">
-          <p>Copyright {currentYear} CipherLab. All Rights Reserved.</p>
+          <p><span className="footer-live-dot"></span> CIPHERLAB SYSTEM ONLINE</p>
+          <p>© {currentYear} CipherLab</p>
         </div>
       </footer>
     </div>

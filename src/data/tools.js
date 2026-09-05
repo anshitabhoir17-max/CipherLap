@@ -1,11 +1,11 @@
 export const tools = [
   {
-    title: "Email Header Analyzer",
+    title: "AI Phishing Email Detector",
     path: "/tools/email-headers",
-    tag: "Mail Routing",
+    tag: "AI Email Check",
     group: "email",
     symbol: "@",
-    description: "Check SPF, DKIM, DMARC, reply-to mismatch, sender spoofing clues, mail route details, and phishing signals.",
+    description: "Paste an email or message body and get a simple AI phishing-risk prediction with an explanation.",
   },
   {
     title: "Email Safety Check",
@@ -128,6 +128,14 @@ export const tools = [
     group: "utility",
     symbol: "NET",
     description: "Follow an interactive decision tree from a network problem to the next diagnostic command.",
+  },
+  {
+    title: "Malware File Scanner",
+    path: "/tools/malware-scanner",
+    tag: "File Safety",
+    group: "utility",
+    symbol: "MS",
+    description: "Inspect a file locally with hashes and safe heuristic signals. No files are uploaded or deleted.",
   },
   {
     title: "Network scanner concept",

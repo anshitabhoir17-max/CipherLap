@@ -5,10 +5,10 @@ export function HomePage({ authEnabled }) {
     <div className="home-stack">
       <section className="hero-card home-hero">
         <div className="landing-copy">
-          <p className="eyebrow">Student VAPT Lab</p>
-          <h2>CipherLab VAPT lab for security practice.</h2>
+          <p className="eyebrow">CipherLab // Student Security Workspace</p>
+          <h2>Learn cybersecurity by doing.</h2>
           <p className="hero-copy">
-            Simple tools for learning, checking, and understanding cybersecurity.
+            Analyze. Investigate. Understand.
           </p>
 
           <div className="hero-links">
@@ -30,7 +30,7 @@ export function HomePage({ authEnabled }) {
 
           <div className="stats-grid">
             <article className="stat-card">
-              <span className="stat-value">17</span>
+              <span className="stat-value">18</span>
               <p className="stat-label">Tools</p>
             </article>
             <article className="stat-card">
@@ -44,44 +44,61 @@ export function HomePage({ authEnabled }) {
           </div>
         </div>
 
-        <div className="landing-panel hero-panel">
-          <p className="landing-panel-tag">Direct resource</p>
-          <p className="panel-copy">
-            Open the OWASP Top 10 main page directly from CipherLab. This link launches the official resource without extra browser navigation.
-          </p>
-          <div className="alert-row">
-            <span className="status-chip safe">Safe</span>
-            <span className="status-chip suspicious">Suspicious</span>
-            <span className="status-chip warning">Warning</span>
-            <span className="status-chip vulnerable">Vulnerable</span>
+        <div className="landing-panel hero-panel system-console">
+          <div className="console-topline"><span>● SYSTEM STATUS</span><span className="console-online">ONLINE</span></div>
+          <div className="console-status"><span className="status-dot"></span><strong>PROTECTED</strong></div>
+          <div className="console-rule"></div>
+          <p className="console-label">ANALYSIS ENGINE</p>
+          <div className="console-checks">
+            <span>✓ HASH ANALYSIS</span>
+            <span>✓ PHISHING AI</span>
+            <span>✓ STATIC REVIEW</span>
+            <span>✓ GUIDED LABS</span>
           </div>
+        </div>
+      </section>
+
+      <section className="lab-strip">
+        <div className="lab-strip-heading">
+          <p className="eyebrow">CipherLab analysis platform</p>
+          <h2>Tools for every security checkpoint.</h2>
+          <p>Built for students who want to understand the signal behind the result.</p>
+        </div>
+        <div className="lab-metrics">
+          <div><span className="metric-number">18</span><span>available tools</span></div>
+          <div><span className="metric-number">04</span><span>VAPT stages</span></div>
+          <div><span className="metric-number">24</span><span>learning checkpoints</span></div>
         </div>
       </section>
 
       <section className="mission-section">
         <div className="section-heading">
           <div>
-            <p className="eyebrow">Learn by doing</p>
-            <h2>Understand what you see. Know what to do next.</h2>
+            <p className="eyebrow">Core modules</p>
+            <h2>Choose your next move.</h2>
           </div>
         </div>
 
         <div className="mission-grid">
           <article className="mission-card">
-            <h3>Inspect suspicious domains</h3>
-            <p>Check domains, DNS, TLS, and website details.</p>
+            <span className="mission-index">01</span>
+            <h3>Domain Recon</h3>
+            <p>DNS · TLS · Web details</p>
           </article>
           <article className="mission-card">
-            <h3>Analyze email headers</h3>
-            <p>Spot spoofing and phishing clues in email headers.</p>
+            <span className="mission-index">02</span>
+            <h3>Email Signals</h3>
+            <p>AI phishing detection</p>
           </article>
           <article className="mission-card">
-            <h3>Verify hashes and integrity</h3>
-            <p>Verify files, hashes, passwords, and encoded data.</p>
+            <span className="mission-index">03</span>
+            <h3>File Integrity</h3>
+            <p>Hashes · Passwords · Encoding</p>
           </article>
           <article className="mission-card">
-            <h3>Decode tokens and hidden data</h3>
-            <p>Translate output and follow guided troubleshooting steps.</p>
+            <span className="mission-index">04</span>
+            <h3>Guided Labs</h3>
+            <p>Output · Commands · Troubleshooting</p>
           </article>
         </div>
       </section>
@@ -97,21 +114,28 @@ export function HomePage({ authEnabled }) {
 
         <div className="feature-grid">
           <article className="feature-card">
+            <span className="feature-signal">● LIVE MODULE</span>
+            <p className="tool-tag">MALWARE DEFENSE</p>
+            <h3>Malware File Scanner</h3>
+            <p>Local hash and risk review.</p>
+            <Link className="hero-link" to="/tools/malware-scanner">Open Scanner</Link>
+          </article>
+          <article className="feature-card">
             <p className="tool-tag">VAPT</p>
             <h3>OWASP Top 10 mini-checker</h3>
-            <p>Review the top web security risks with examples and remediation guidance.</p>
+            <p>Web risk checklist.</p>
             <Link className="hero-link" to="/tools/owasp-top10">Open Tool</Link>
           </article>
           <article className="feature-card">
             <p className="tool-tag">Guided Learning</p>
             <h3>Command Guide</h3>
-            <p>Understand the next safe lab step instead of guessing which command comes next.</p>
+            <p>One safe lab step at a time.</p>
             <Link className="hero-link" to="/tools/command-guide">Open Tool</Link>
           </article>
           <article className="feature-card">
             <p className="tool-tag">Recon</p>
             <h3>Network scanner concept</h3>
-            <p>Explore safe network reconnaissance concepts.</p>
+            <p>Safe recon concepts.</p>
             <Link className="hero-link" to="/tools/network-scanner">Open Tool</Link>
           </article>
         </div>

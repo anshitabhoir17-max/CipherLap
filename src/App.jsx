@@ -27,6 +27,7 @@ const CommandGuidePage = lazyNamed(() => import("./pages/CommandGuidePage"), "Co
 const OutputTranslatorPage = lazyNamed(() => import("./pages/OutputTranslatorPage"), "OutputTranslatorPage");
 const NetworkTroubleshootingPage = lazyNamed(() => import("./pages/NetworkTroubleshootingPage"), "NetworkTroubleshootingPage");
 const NetworkScannerPage = lazyNamed(() => import("./pages/NetworkScannerPage"), "NetworkScannerPage");
+const MalwareScannerPage = lazyNamed(() => import("./pages/MalwareScannerPage"), "MalwareScannerPage");
 
 export default function App({ authEnabled }) {
   return (
@@ -66,6 +67,7 @@ export default function App({ authEnabled }) {
           <Route path="/tools/output-translator" element={<OutputTranslatorPage authEnabled={authEnabled} />} />
           <Route path="/tools/network-troubleshooting" element={<NetworkTroubleshootingPage authEnabled={authEnabled} />} />
           <Route path="/tools/network-scanner" element={<NetworkScannerPage authEnabled={authEnabled} />} />
+          <Route path="/tools/malware-scanner" element={<MalwareScannerPage authEnabled={authEnabled} />} />
           <Route path="/career" element={<CareerRoadmapPage />} />
           <Route path="/career/:roleId" element={<CareerRolePage />} />
         </Routes>

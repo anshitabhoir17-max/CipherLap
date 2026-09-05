@@ -54,6 +54,7 @@ img {
 
 .app-shell {
   position: relative;
+  z-index: 1;
   width: min(1180px, calc(100% - 32px));
   margin: 0 auto;
   padding: 24px 0 48px;
@@ -90,6 +91,185 @@ img {
   right: -12rem;
   top: 24rem;
   background: #1b8c6c;
+}
+
+/* Lightweight global cyber scene: CSS-only, so it stays fast on the deployed site. */
+.cyber-scene {
+  position: fixed;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 1;
+}
+
+.cyber-scene::before {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background: radial-gradient(circle at 72% 28%, rgba(17, 105, 135, 0.24), transparent 24%), radial-gradient(circle at 18% 70%, rgba(26, 80, 120, 0.14), transparent 28%), linear-gradient(180deg, transparent 45%, rgba(2, 7, 13, 0.7));
+}
+
+.cyber-scanline {
+  position: absolute;
+  inset: 0;
+  opacity: 0.18;
+  background: repeating-linear-gradient(0deg, transparent 0 5px, rgba(114, 242, 197, 0.08) 6px, transparent 7px);
+  mix-blend-mode: screen;
+}
+
+.cyber-orb {
+  position: absolute;
+  top: 18%;
+  right: 10%;
+  width: 280px;
+  aspect-ratio: 1;
+  border: 1px solid rgba(114, 242, 197, 0.4);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(114, 242, 197, 0.22), rgba(4, 9, 15, 0.05) 58%, transparent 68%);
+  box-shadow: 0 0 70px rgba(108, 200, 255, 0.18), inset 0 0 40px rgba(114, 242, 197, 0.2);
+  animation: orb-float 9s ease-in-out infinite;
+}
+
+.cyber-orb b {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  color: rgba(191, 255, 238, 0.72);
+  text-align: center;
+  font: 600 0.58rem/1.5 "Chakra Petch", sans-serif;
+  letter-spacing: 0.2em;
+  text-shadow: 0 0 16px rgba(114, 242, 197, 0.8);
+}
+
+.cyber-orb::before,
+.cyber-orb::after,
+.cyber-orb span {
+  position: absolute;
+  inset: 12%;
+  content: "";
+  border: 1px solid rgba(108, 200, 255, 0.35);
+  border-radius: 50%;
+}
+
+.cyber-orb::after { inset: 26%; border-color: rgba(255, 197, 98, 0.42); animation: orb-spin 12s linear infinite reverse; }
+.cyber-orb span:nth-child(1) { inset: 39%; border-color: rgba(114, 242, 197, 0.68); }
+.cyber-orb span:nth-child(2) { inset: 4%; transform: rotate(60deg) scaleY(0.35); animation: orb-spin 16s linear infinite; }
+.cyber-orb span:nth-child(3) { inset: 4%; transform: rotate(-60deg) scaleY(0.35); animation: orb-spin 18s linear infinite reverse; }
+
+.cyber-node {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 18px var(--accent);
+  animation: node-pulse 3s ease-in-out infinite;
+}
+.node-one { top: 34%; left: 12%; }
+.node-two { top: 68%; left: 72%; animation-delay: 1s; }
+.node-three { top: 22%; left: 48%; animation-delay: 2s; }
+
+.cyber-beam {
+  position: absolute;
+  height: 1px;
+  transform-origin: left center;
+  background: linear-gradient(90deg, transparent, rgba(108, 200, 255, 0.55), transparent);
+  animation: beam-pulse 4s ease-in-out infinite;
+}
+.beam-one { top: 34%; left: 12%; width: 48%; transform: rotate(-13deg); }
+.beam-two { top: 68%; left: 35%; width: 42%; transform: rotate(-29deg); animation-delay: 1.5s; }
+
+.cyber-circuit {
+  position: absolute;
+  width: 160px;
+  height: 160px;
+  border: 1px solid rgba(108, 200, 255, 0.2);
+  border-radius: 28px;
+  transform: rotate(45deg) perspective(300px) rotateX(58deg);
+  box-shadow: 0 0 30px rgba(108, 200, 255, 0.08), inset 0 0 22px rgba(114, 242, 197, 0.06);
+  animation: circuit-drift 13s ease-in-out infinite;
+}
+.circuit-one { left: 4%; top: 48%; }
+.circuit-two { right: 24%; top: 64%; width: 90px; height: 90px; border-color: rgba(255, 197, 98, 0.2); animation-delay: 2s; }
+.circuit-three { right: 4%; top: 42%; width: 130px; height: 130px; animation-delay: 5s; }
+
+.cyber-floor {
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  bottom: -18%;
+  height: 48%;
+  transform: perspective(380px) rotateX(62deg);
+  transform-origin: center bottom;
+  background-image:
+    linear-gradient(rgba(108, 200, 255, 0.16) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(108, 200, 255, 0.16) 1px, transparent 1px);
+  background-size: 70px 42px;
+  mask-image: linear-gradient(180deg, transparent, #000 48%, transparent);
+  box-shadow: 0 -30px 90px rgba(16, 115, 151, 0.18);
+}
+
+@keyframes orb-float { 50% { transform: translateY(18px) rotate(5deg); } }
+@keyframes orb-spin { to { transform: rotate(360deg) scaleY(0.35); } }
+@keyframes node-pulse { 50% { opacity: 0.35; transform: scale(1.8); } }
+@keyframes beam-pulse { 50% { opacity: 0.25; } }
+@keyframes circuit-drift { 50% { transform: rotate(55deg) perspective(300px) rotateX(58deg) translateY(-18px); opacity: 0.45; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .cyber-orb, .cyber-orb::after, .cyber-orb span, .cyber-node, .cyber-beam { animation: none; }
+}
+
+@media (max-width: 760px) {
+  .cyber-orb { top: 23%; right: -72px; width: 190px; opacity: 0.55; }
+  .cyber-floor { bottom: -8%; height: 30%; background-size: 48px 32px; }
+  .cyber-beam { opacity: 0.45; }
+  .cyber-circuit { opacity: 0.35; transform: scale(0.65) rotate(45deg) perspective(300px) rotateX(58deg); }
+}
+
+.site-footer {
+  position: relative;
+  overflow: hidden;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(5, 15, 24, 0.82), rgba(7, 25, 35, 0.56));
+  backdrop-filter: blur(12px);
+}
+
+.site-footer::before {
+  position: absolute;
+  top: 0;
+  left: 8%;
+  right: 8%;
+  height: 1px;
+  content: "";
+  background: linear-gradient(90deg, transparent, var(--accent), var(--accent-2), transparent);
+  opacity: 0.7;
+}
+
+.site-footer .footer-top {
+  grid-template-columns: 1.5fr 0.7fr 0.7fr;
+  gap: 28px;
+  padding: 30px 32px 24px;
+}
+
+.site-footer .footer-brand-lockup { margin-bottom: 10px; }
+.site-footer .footer-description { margin: 0; color: var(--muted); font-size: 0.82rem; }
+.site-footer .footer-column-title { color: var(--accent); font: 0.7rem "Chakra Petch", monospace; letter-spacing: 0.16em; text-transform: uppercase; }
+.site-footer .footer-links-column,
+.site-footer .footer-contact-column { gap: 9px; }
+.site-footer .footer-links-column a,
+.site-footer .footer-contact-column a { color: var(--muted); font-size: 0.86rem; }
+.site-footer .footer-links-column a:hover,
+.site-footer .footer-contact-column a:hover { color: var(--accent); }
+.site-footer .footer-bottom { display: flex; justify-content: space-between; align-items: center; padding: 14px 32px; border-top: 1px solid rgba(108, 200, 255, 0.14); color: var(--muted); font: 0.68rem "Chakra Petch", monospace; letter-spacing: 0.08em; text-transform: uppercase; }
+.site-footer .footer-bottom p { margin: 0; }
+.footer-live-dot { display: inline-block; width: 7px; height: 7px; margin-right: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 12px var(--accent); }
+
+@media (max-width: 760px) {
+  .site-footer .footer-top { grid-template-columns: 1fr 1fr; padding: 24px 20px 20px; }
+  .site-footer .footer-brand-column { grid-column: 1 / -1; }
+  .site-footer .footer-bottom { padding: 14px 20px; }
 }
 
 .topbar,
@@ -2629,4 +2809,112 @@ body {
   .tool-surface h2 {
     font-size: 2.35rem;
   }
+}
+
+/* Homepage product-console styling */
+.home-hero {
+  position: relative;
+  overflow: hidden;
+  min-height: 520px;
+  border-color: rgba(114, 242, 197, 0.22);
+  background: linear-gradient(120deg, rgba(5, 15, 24, 0.82), rgba(8, 25, 37, 0.55));
+  backdrop-filter: blur(10px);
+}
+
+.home-hero::after {
+  position: absolute;
+  inset: 14px;
+  content: "";
+  border: 1px solid rgba(108, 200, 255, 0.1);
+  border-radius: calc(var(--radius) - 8px);
+  pointer-events: none;
+}
+
+.home-hero .landing-copy,
+.home-hero .hero-panel {
+  position: relative;
+  z-index: 1;
+}
+
+.home-hero h2 {
+  max-width: 580px;
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+}
+
+.home-hero .hero-copy {
+  color: var(--accent-2);
+  font: 600 0.9rem/1.6 "Chakra Petch", sans-serif;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.system-console {
+  align-self: center;
+  min-height: 300px;
+  border-color: rgba(114, 242, 197, 0.28);
+  background: linear-gradient(145deg, rgba(4, 14, 22, 0.75), rgba(12, 39, 51, 0.42));
+  box-shadow: 0 0 80px rgba(53, 202, 173, 0.12), inset 0 0 35px rgba(108, 200, 255, 0.05);
+}
+
+.console-topline,
+.console-status,
+.console-checks,
+.lab-metrics {
+  font-family: "Chakra Petch", monospace;
+}
+
+.console-topline {
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+}
+
+.console-online { color: var(--accent); }
+.console-status { display: flex; align-items: center; gap: 12px; margin: 42px 0 26px; font-size: 1.7rem; letter-spacing: 0.08em; }
+.status-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 18px var(--accent); animation: node-pulse 2.5s ease-in-out infinite; }
+.console-rule { height: 1px; background: linear-gradient(90deg, var(--accent), transparent); }
+.console-label { margin: 24px 0 12px; color: var(--muted); font: 0.7rem "Chakra Petch", monospace; letter-spacing: 0.15em; }
+.console-checks { display: grid; gap: 10px; color: var(--accent-2); font-size: 0.78rem; letter-spacing: 0.08em; }
+
+.lab-strip {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 28px;
+  align-items: end;
+  padding: 28px 4px 8px;
+  border-bottom: 1px solid rgba(108, 200, 255, 0.2);
+}
+
+.lab-strip h2 { margin: 0; max-width: 560px; font: 1.8rem/1.1 "Chakra Petch", sans-serif; }
+.lab-strip p:not(.eyebrow) { max-width: 520px; color: var(--muted); }
+.lab-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.lab-metrics div { display: grid; gap: 4px; padding-left: 14px; border-left: 1px solid var(--line); color: var(--muted); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; }
+.metric-number { color: var(--accent); font-size: 1.8rem; letter-spacing: 0; }
+
+.mission-card,
+.feature-card,
+.stat-card {
+  border-color: rgba(108, 200, 255, 0.18);
+  background: rgba(7, 18, 29, 0.52);
+  backdrop-filter: blur(8px);
+}
+
+.mission-card { position: relative; min-height: 150px; }
+.mission-card h3 { margin: 30px 0 12px; font-size: 1.1rem; }
+.mission-card p { margin: 0; color: var(--muted); font: 0.72rem "Chakra Petch", monospace; letter-spacing: 0.06em; text-transform: uppercase; }
+.mission-index { color: var(--accent); font: 0.75rem "Chakra Petch", monospace; letter-spacing: 0.1em; }
+.feature-card { position: relative; }
+.feature-signal { display: block; margin-bottom: 16px; color: var(--accent); font: 0.68rem "Chakra Petch", monospace; letter-spacing: 0.12em; }
+.feature-card p:not(.tool-tag):not(.feature-signal) { color: var(--muted); }
+.feature-card:hover { border-color: rgba(114, 242, 197, 0.48); transform: translateY(-5px); }
+
+@media (max-width: 760px) {
+  .home-hero { min-height: 0; }
+  .home-hero h2 { font-size: 2.5rem; }
+  .lab-strip { grid-template-columns: 1fr; }
+  .lab-metrics { margin-top: 8px; }
 }
