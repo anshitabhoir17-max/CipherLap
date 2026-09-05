@@ -1,4 +1,5 @@
 import http from "node:http";
+import { spawn } from "node:child_process";
 import dns from "node:dns/promises";
 import fs from "node:fs";
 import path from "node:path";
@@ -44,6 +45,54 @@ function sendJson(response, statusCode, payload) {
     "Cache-Control": "no-store",
   });
   response.end(JSON.stringify(payload));
+}
+
+function runPhishingModel(text) {
+  return new Promise((resolve, reject) => {
+    const python = process.platform === "win32" ? "python" : "python3";
+    const scriptPath = path.join(ROOT_DIR, "ml", "predict_phishing.py");
+    const modelPath = path.join(ROOT_DIR, "ml", "phishing_model.pkl");
+    const vectorizerPath = path.join(ROOT_DIR, "ml", "tfidf_vectorizer.pkl");
+    const child = spawn(python, [scriptPath, modelPath, vectorizerPath], { windowsHide: true });
+    let stdout = "";
+    let stderr = "";
+    child.stdout.on("data", (chunk) => { stdout += chunk; });
+    child.stderr.on("data", (chunk) => { stderr += chunk; });
+    child.on("error", reject);
+    child.on("close", (code) => {
+      if (code !== 0) {
+        reject(new Error(stderr.trim() || "The phishing model process failed."));
+        return;
+      }
+      try {
+        resolve(JSON.parse(stdout));
+      } catch {
+        reject(new Error("The phishing model returned an invalid response."));
+      }
+    });
+    child.stdin.end(JSON.stringify({ text }));
+  });
+}
+
+async function handlePhishingPredict(request, response) {
+  try {
+    const body = await readJsonBody(request);
+    const text = typeof body.text === "string" ? body.text.trim() : "";
+    if (!text) {
+      sendJson(response, 400, { error: "Paste email text or headers first." });
+      return;
+    }
+    if (text.length > 250000) {
+      sendJson(response, 413, { error: "Email content is too large for this local model." });
+      return;
+    }
+    sendJson(response, 200, await runPhishingModel(text));
+  } catch (error) {
+    sendJson(response, 503, {
+      error: "The AI phishing model is unavailable. Install the Python dependencies and start the API server.",
+      details: error instanceof Error ? error.message : "Unknown model error.",
+    });
+  }
 }
 
 function readJsonBody(request) {
@@ -326,6 +375,11 @@ const server = http.createServer(async (request, response) => {
 
   if (request.method === "POST" && url.pathname === "/api/ai-image-detect") {
     await handleAiImageDetect(request, response);
+    return;
+  }
+
+  if (request.method === "POST" && url.pathname === "/api/phishing-predict") {
+    await handlePhishingPredict(request, response);
     return;
   }
 

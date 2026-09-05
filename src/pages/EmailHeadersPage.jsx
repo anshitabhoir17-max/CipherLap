@@ -17,7 +17,9 @@ Received: from host2.example.net (198.51.100.12)`;
 export function EmailHeadersPage({ authEnabled }) {
   const [input, setInput] = useState(sampleHeaders);
   const [result, setResult] = useState(null);
+  const [modelResult, setModelResult] = useState(null);
   const [error, setError] = useState("");
+  const [modelError, setModelError] = useState("");
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -30,6 +32,28 @@ export function EmailHeadersPage({ authEnabled }) {
     } catch (analysisError) {
       setResult(null);
       setError(analysisError.message);
+    }
+  };
+
+  const handleModelAnalyze = async () => {
+    if (!input.trim()) {
+      setModelError("Paste email content or headers first.");
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/phishing-predict", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: input }),
+      });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || "The AI model request failed.");
+      setModelResult(payload);
+      setModelError("");
+    } catch (modelAnalysisError) {
+      setModelResult(null);
+      setModelError(modelAnalysisError.message);
     }
   };
 
@@ -46,9 +70,10 @@ export function EmailHeadersPage({ authEnabled }) {
                 return-path clues, and route consistency.
               </p>
             </div>
-            <button className="tool-submit" type="button" onClick={handleAnalyze}>
-              Analyze Headers
-            </button>
+            <div className="button-row">
+              <button className="tool-submit" type="button" onClick={handleAnalyze}>Analyze Headers</button>
+              <button className="nav-button ghost" type="button" onClick={handleModelAnalyze}>Analyze Email Content with AI</button>
+            </div>
           </div>
 
           <label className="tool-label" htmlFor="email-headers-input">
@@ -63,7 +88,19 @@ export function EmailHeadersPage({ authEnabled }) {
         </section>
 
         {error ? <section className="tool-result error-panel">{error}</section> : null}
+        {modelError ? <section className="tool-result error-panel">{modelError}</section> : null}
         {result ? <ResultPanel title="Email Header Analyzer" {...result} /> : null}
+        {modelResult ? (
+          <ResultPanel
+            title="AI Phishing Detection"
+            badge={modelResult.prediction === "phishing" ? "PHISHING LIKELY" : "LEGITIMATE LIKELY"}
+            tone={modelResult.prediction === "phishing" ? "high" : "low"}
+            score={modelResult.phishingProbability}
+            summary={`The supplied email was classified as ${modelResult.prediction} with a ${modelResult.phishingProbability}% phishing probability.`}
+            action="Treat this as a model prediction, not proof. Combine it with header authentication, sender context, and URL review."
+            findings={[`Model: ${modelResult.model}`, `Phishing probability: ${modelResult.phishingProbability}%`]}
+          />
+        ) : null}
       </div>
     </ToolGate>
   );
