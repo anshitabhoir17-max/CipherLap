@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { ResultPanel } from "../components/ResultPanel";
 import { ToolGate } from "../components/ToolGate";
 import { analyzeEmailHeaders } from "../lib/advancedTools";
+import { analyzePhishingModel } from "../lib/phishingModel";
 
 const sampleHeaders = `From: "Bank Alerts" <alerts@secure-bank-mail.com>
 Reply-To: support@bank-helpdesk-alerts.net
@@ -42,13 +43,7 @@ export function EmailHeadersPage({ authEnabled }) {
     }
 
     try {
-      const response = await fetch("/api/phishing-predict", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: input }),
-      });
-      const payload = await response.json();
-      if (!response.ok) throw new Error(payload.error || "The AI model request failed.");
+      const payload = await analyzePhishingModel(input);
       setModelResult(payload);
       setModelError("");
     } catch (modelAnalysisError) {

@@ -49,14 +49,9 @@ npm run dev
 
 ## Automatic deployment
 
-The GitHub Actions workflow in `.github/workflows/vercel-deploy.yml` deploys after every push to
-`main`. In the GitHub repository settings, add these Actions secrets:
-
-- `VERCEL_TOKEN`: a Vercel access token
-- `VERCEL_SCOPE`: your Vercel team or account scope, for example `anshitabhoir17-maxs-projects`
-
-Make sure the Vercel project is connected to this repository, `anshitabhoir17-max/CipherLap`,
-and uses `npm run build` with `dist` as the output directory.
+The Vercel Git integration deploys every push to the configured production branch. Connect the
+Vercel project to `anshitabhoir17-max/CipherLap`, use `npm run build`, and set `dist` as the
+output directory.
 
 ## Environment variables
 
